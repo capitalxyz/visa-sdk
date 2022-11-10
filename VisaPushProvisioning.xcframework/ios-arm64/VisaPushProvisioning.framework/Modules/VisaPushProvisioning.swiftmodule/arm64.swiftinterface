@@ -1,0 +1,187 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)
+// swift-module-flags: -target arm64-apple-ios12.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name VisaPushProvisioning
+import Foundation
+import PassKit
+import Swift
+import UIKit
+import VisaFeatureModuleCore
+import VisaInAppModuleCore
+import VisaMobileFoundation
+@_exported import VisaPushProvisioning
+@objc public protocol VisaPushProvisioningInterface {
+  @objc func initialize()
+  @objc func getSupportedWallets(request: VisaPushProvisioning.VPSupportedWalletRequest)
+  @objc func startCardProvisioning(request: VisaPushProvisioning.VPCardProvisioningRequest, initialView: UIKit.UIViewController)
+}
+@_inheritsConvenienceInitializers @objc public class VisaPushProvisioningInterfaceFactory : ObjectiveC.NSObject {
+  @objc public class func createPushProvisioningInterface(listener: VisaPushProvisioning.VisaPushProvisioningListener, testScenario: VisaPushProvisioning.VPTestScenario) -> VisaPushProvisioning.VisaPushProvisioningInterface
+  @objc public class func createPushProvisioningInterface(listener: VisaPushProvisioning.VisaPushProvisioningListener) -> VisaPushProvisioning.VisaPushProvisioningInterface
+  @objc deinit
+  @objc override dynamic public init()
+}
+@objc public class VPInitResponse : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let signedNonce: Swift.String
+  @objc public init(signedNonce: Swift.String)
+  @objc public func toJsonString() -> Swift.String?
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc public class VPSupportedWalletResponse : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let wallets: [VisaPushProvisioning.VPSupportedWallet]
+  @objc public init(wallets: [VisaPushProvisioning.VPSupportedWallet])
+  @objc public func toJsonString() -> Swift.String?
+  @objc deinit
+  @objc override dynamic public init()
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc public class VPCardProvisioningResponse : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let walletStatus: VisaPushProvisioning.VPProvisionStatus
+  @objc public init(walletStatus: VisaPushProvisioning.VPProvisionStatus)
+  @objc public func toJsonString() -> Swift.String?
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc public protocol VisaPushProvisioningListener : AnyObject {
+  @objc func initializationSuccess(pushProvisioningInterface: VisaPushProvisioning.VisaPushProvisioningInterface, response: VisaPushProvisioning.VPInitResponse)
+  @objc func initializationFailure(pushProvisioningInterface: VisaPushProvisioning.VisaPushProvisioningInterface, error: VisaPushProvisioning.VPError)
+  @objc func supportedWalletSuccess(pushProvisioningInterface: VisaPushProvisioning.VisaPushProvisioningInterface, response: VisaPushProvisioning.VPSupportedWalletResponse)
+  @objc func supportedWalletFailure(pushProvisioningInterface: VisaPushProvisioning.VisaPushProvisioningInterface, error: VisaPushProvisioning.VPError)
+  @objc func cardProvisioningSuccess(pushProvisioningInterface: VisaPushProvisioning.VisaPushProvisioningInterface, response: VisaPushProvisioning.VPCardProvisioningResponse)
+  @objc func cardProvisioningFailure(pushProvisioningInterface: VisaPushProvisioning.VisaPushProvisioningInterface, error: VisaPushProvisioning.VPError)
+}
+@_hasMissingDesignatedInitializers @objc public class VPError : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let type: VisaPushProvisioning.VPErrorType
+  @objc final public let code: Swift.String
+  @objc override dynamic public var description: Swift.String {
+    @objc get
+  }
+  @objc final public let correlationId: Swift.String
+  @objc public init(type: VisaPushProvisioning.VPErrorType, correlationId: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  @objc public func toJsonString() -> Swift.String?
+  @objc deinit
+  @objc override dynamic public init()
+}
+@objc public enum VPErrorType : Swift.Int, Swift.Encodable {
+  case EmptyAppId
+  case DeviceAuthenticationFailed
+  case DeviceRootDetection
+  case EmptyEncryptedPayload
+  case NoWallets
+  case InvalidCardId
+  case InvalidCardLast4Digits
+  case ProvisioningNotAllowed
+  case CancelledByUser
+  case AppleWalletProvisioningError
+  case UnableToCreateApplePaymentPassView
+  case ValidAppleCertificatesNotFound
+  case NetworkFailure
+  case SessionExpired
+  case InvalidInfo
+  case PayloadDecryptionFailed
+  case ApiError
+  case InvalidNonce
+  case SDKLockout
+  case WalletProvisioningInconclusive
+  case WalletProvisioningError
+  public typealias RawValue = Swift.String
+  public func encode(to encoder: Swift.Encoder) throws
+  public var rawValue: VisaPushProvisioning.VPErrorType.RawValue {
+    get
+  }
+  public init?(rawValue: VisaPushProvisioning.VPErrorType.RawValue)
+}
+@objc public enum VPTestScenario : Swift.Int, Swift.CaseIterable, Swift.RawRepresentable {
+  case ApplePayNotSetupForBin
+  case ApplePayCardNotSupported
+  case ApplePayCardProvisioningFailed
+  case ApplePayCardAlreadyProvisioned
+  case ApplePayCardProvisioningSuccess
+  case EmptyAppId
+  case IncorrectAppId
+  public typealias RawValue = Swift.String
+  public var rawValue: VisaPushProvisioning.VPTestScenario.RawValue {
+    get
+  }
+  public init?(rawValue: VisaPushProvisioning.VPTestScenario.RawValue)
+  public typealias AllCases = [VisaPushProvisioning.VPTestScenario]
+  public static var allCases: [VisaPushProvisioning.VPTestScenario] {
+    get
+  }
+}
+@objc public enum VPSupportedWalletCode : Swift.Int, Swift.CaseIterable {
+  case ApplePayPushProvision
+  case VCEHPushProvision
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+  public typealias AllCases = [VisaPushProvisioning.VPSupportedWalletCode]
+  public static var allCases: [VisaPushProvisioning.VPSupportedWalletCode] {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers @objc public class VPSupportedWallet : ObjectiveC.NSObject, Swift.Encodable {
+  @objc final public let code: VisaPushProvisioning.VPSupportedWalletCode
+  @objc public var status: VisaPushProvisioning.VPProvisionStatus
+  @objc final public let category: Swift.String
+  @objc final public let logoImageURLString: Swift.String?
+  @objc final public let reason: VisaPushProvisioning.VPReason
+  @objc final public let name: Swift.String
+  @objc public init(code: VisaPushProvisioning.VPSupportedWalletCode, status: VisaPushProvisioning.VPProvisionStatus, name: Swift.String, category: Swift.String, reason: VisaPushProvisioning.VPReason, logoImageURLString: Swift.String?)
+  public func encode(to encoder: Swift.Encoder) throws
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc public class VPReason : ObjectiveC.NSObject, Swift.Codable {
+  @objc final public let reason: Swift.String
+  @objc public init(reason: Swift.String)
+  @objc override dynamic public init()
+  required public init(from decoder: Swift.Decoder) throws
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc public enum VPProvisionStatus : Swift.Int, Swift.Encodable, Swift.RawRepresentable, Swift.CaseIterable {
+  case ReadyToProvision
+  case AlreadyProvisioned
+  case ProvisionedInCurrentDevice
+  case ProvisionedInPairedDevice
+  case NotAvailable
+  public func encode(to encoder: Swift.Encoder) throws
+  public typealias RawValue = Swift.String
+  public var rawValue: VisaPushProvisioning.VPProvisionStatus.RawValue {
+    get
+  }
+  public init?(rawValue: VisaPushProvisioning.VPProvisionStatus.RawValue)
+  public typealias AllCases = [VisaPushProvisioning.VPProvisionStatus]
+  public static var allCases: [VisaPushProvisioning.VPProvisionStatus] {
+    get
+  }
+}
+@objc public class VPSupportedWalletRequest : ObjectiveC.NSObject {
+  @objc final public let encPayload: Swift.String
+  @objc public init(encPayload: Swift.String)
+  @objc deinit
+  @objc override dynamic public init()
+}
+@objc public class VPCardProvisioningRequest : ObjectiveC.NSObject {
+  @objc final public let walletCode: VisaPushProvisioning.VPSupportedWalletCode
+  @objc final public let walletName: Swift.String
+  @objc public init(walletCode: VisaPushProvisioning.VPSupportedWalletCode, walletName: Swift.String)
+  @objc deinit
+  @objc override dynamic public init()
+}
+extension VisaPushProvisioning.VPErrorType : Swift.Equatable {}
+extension VisaPushProvisioning.VPErrorType : Swift.Hashable {}
+extension VisaPushProvisioning.VPErrorType : Swift.RawRepresentable {}
+extension VisaPushProvisioning.VPTestScenario : Swift.Equatable {}
+extension VisaPushProvisioning.VPTestScenario : Swift.Hashable {}
+extension VisaPushProvisioning.VPSupportedWalletCode : Swift.Equatable {}
+extension VisaPushProvisioning.VPSupportedWalletCode : Swift.Hashable {}
+extension VisaPushProvisioning.VPSupportedWalletCode : Swift.RawRepresentable {}
+extension VisaPushProvisioning.VPProvisionStatus : Swift.Equatable {}
+extension VisaPushProvisioning.VPProvisionStatus : Swift.Hashable {}

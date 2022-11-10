@@ -1,0 +1,11 @@
+framework module VisaPushProvisioning {
+  umbrella header "VisaPushProvisioning.h"
+
+  export *
+  module * { export * }
+}
+
+module VisaPushProvisioning.Swift {
+    header "VisaPushProvisioning-Swift.h"
+    requires objc
+}

@@ -1,0 +1,624 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)
+// swift-module-flags: -target arm64-apple-ios12.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name VisaFeatureModuleCore
+import CommonCrypto
+import Foundation
+import LocalAuthentication
+import Swift
+import UIKit
+@_exported import VisaFeatureModuleCore
+import VisaMobileFoundation
+public enum APIEventType : Swift.String {
+  case success
+  case error
+  public typealias RawValue = Swift.String
+  public init?(rawValue: Swift.String)
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public func apiEvent(_ type: VisaFeatureModuleCore.APIEventType, label: Swift.String, other: [Swift.String : Swift.String]) -> VisaMobileFoundation.AnalyticsEvent
+public func apiEvent<M, N>(label: Swift.String, result: VisaMobileFoundation.DataProviderResult<M, N>) -> VisaMobileFoundation.AnalyticsEvent where N : Swift.Error
+public class DMSAuthenticationData {
+  final public let authenticityKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey
+  final public let identityConfidentialityKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey
+  final public let payloadKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey
+  final public let vAppDeviceId: Swift.String
+  final public let initialSubjectId: Swift.String
+  final public let token: Swift.String
+  final public let authenticityKeyId: Swift.String
+  final public let expiresIn: Swift.Int
+  public init(authenticityKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey, identityConfidentialityKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey, payloadKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey, vAppDeviceId: Swift.String, initialSubjectId: Swift.String, token: Swift.String, authenticityKeyId: Swift.String, expiresIn: Swift.Int)
+  public init?(dmsSessionKeyData: VisaFeatureModuleCore.DMSSessionKeyDataAndDeviceProfileSessionID)
+  @objc deinit
+}
+public protocol AuthenticatedService : VisaFeatureModuleCore.Service {
+  var authenticationData: VisaFeatureModuleCore.DMSAuthenticationData { get }
+  var scheme: VisaFeatureModuleCore.JWEEncryptionScheme { get }
+}
+extension AuthenticatedService {
+  public func authorizationHeader(urlString: Swift.String, httpMethod: Swift.String, scopedAccessToken: Swift.String? = nil) -> Swift.String?
+  public func encryptData(_ data: Foundation.Data) -> Foundation.Data?
+}
+public enum ProbeType {
+  case terms, idv, challenge, promise
+  public static func == (a: VisaFeatureModuleCore.ProbeType, b: VisaFeatureModuleCore.ProbeType) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public struct AuthorizedSubjectResponse : Swift.Decodable {
+  public let subjects: [VisaFeatureModuleCore.AuthorizedSubject]
+  public let accessToken: Swift.String
+  public let expiresIn: Swift.Int
+  public let refreshToken: Swift.String?
+  public let scope: Swift.String?
+  public let contactData: VisaFeatureModuleCore.ProbeContactData?
+  public init(from decoder: Swift.Decoder) throws
+}
+extension AuthorizedSubjectResponse {
+  public var endUserSubject: VisaFeatureModuleCore.AuthorizedSubject? {
+    get
+  }
+  public var probe: VisaFeatureModuleCore.AuthorizedSubjectProbe? {
+    get
+  }
+  public var needs2fa: Swift.Bool {
+    get
+  }
+  public var needsIDV: Swift.Bool {
+    get
+  }
+  public var needsTAndC: Swift.Bool {
+    get
+  }
+}
+public struct AuthorizedSubject : Swift.Decodable {
+  public let subjectID: Swift.String?
+  public let subjectEntity: Swift.String?
+  public let visitedOn: Swift.Double?
+  public let probes: [VisaFeatureModuleCore.AuthorizedSubjectProbe]?
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct AuthorizedSubjectProbe : Swift.Decodable {
+  public let type: Swift.String
+  public let data: [VisaFeatureModuleCore.AuthorizedSubjectProbeData]
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct AuthorizedSubjectProbeData : Swift.Decodable {
+  public let ref: Swift.Int
+  public let type: Swift.String?
+  public let value: Swift.String?
+  public let probeID: Swift.String?
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct ProbeContactData : Swift.Decodable {
+  public let contacts: [VisaFeatureModuleCore.ProbeContact]
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct ProbeContact : Swift.Decodable {
+  public let guid: Swift.String
+  public let contactValue: Swift.String
+  public let type: Swift.String
+  public init(guid: Swift.String, contactValue: Swift.String, type: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+}
+open class BaseService {
+  public var environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration
+  public var dataProvider: VisaMobileFoundation.DataProvider
+  public init(environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration, dataProvider: VisaMobileFoundation.DataProvider)
+  public var operationQueue: Foundation.OperationQueue {
+    get
+  }
+  open func execute<T>(type: T.Type, completion: @escaping (VisaMobileFoundation.DataProviderResult<T, VisaFeatureModuleCore.APIError>) -> Swift.Void) where T : Swift.Decodable
+  open func makeAPICallWithCompletion(_ completion: @escaping VisaMobileFoundation.DataProviderCompletion)
+  open func cancel()
+  @objc deinit
+}
+public protocol BiometryInterface {
+  var isBiometryAvailable: Swift.Bool { get }
+  var biometryStatus: VisaFeatureModuleCore.BiometryStatus { get }
+  var biometryType: VisaFeatureModuleCore.BiometryType { get }
+  func launchBiometricAuth(with reason: Swift.String, _ completion: @escaping (VisaFeatureModuleCore.BiometryStatus, VisaFeatureModuleCore.BiometryResult) -> Swift.Void)
+}
+public enum BiometryStatus {
+  case available
+  case notAvailableOnDevice
+  case notSetupOnDevice
+  case otherError
+  public static func == (a: VisaFeatureModuleCore.BiometryStatus, b: VisaFeatureModuleCore.BiometryStatus) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public enum BiometryResult {
+  case success
+  case canceled
+  case lockout
+  case failed
+  case denied
+  case otherError
+  public static func == (a: VisaFeatureModuleCore.BiometryResult, b: VisaFeatureModuleCore.BiometryResult) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public enum BiometryType {
+  case none
+  case touchID
+  case faceID
+  public static func == (a: VisaFeatureModuleCore.BiometryType, b: VisaFeatureModuleCore.BiometryType) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public class Biometry : VisaFeatureModuleCore.BiometryInterface {
+  public init(context: LocalAuthentication.LAContext = LAContext(), policyForEvaluation: LocalAuthentication.LAPolicy = .deviceOwnerAuthentication)
+  public var isBiometryAvailable: Swift.Bool {
+    get
+  }
+  public var biometryStatus: VisaFeatureModuleCore.BiometryStatus {
+    get
+  }
+  public var biometryType: VisaFeatureModuleCore.BiometryType {
+    get
+  }
+  public func launchBiometricAuth(with reason: Swift.String, _ completion: @escaping (VisaFeatureModuleCore.BiometryStatus, VisaFeatureModuleCore.BiometryResult) -> Swift.Void)
+  @objc deinit
+}
+public enum CALEventType {
+  case crash(stackTrace: Swift.String)
+  case thmStatus(sessionId: Swift.String, profileStatus: Swift.String)
+  case missingErrorCode(Swift.String)
+  case invalidServerResponse(description: Swift.String, apiEndpoint: Swift.String)
+  case invalidState(description: Swift.String)
+}
+public protocol CALInterface : AnyObject {
+  func push(event: VisaFeatureModuleCore.CALEventType)
+  func setUserGUID(_ userGUID: Swift.String?)
+}
+public class DMSInformation {
+  final public let bundle: Foundation.Bundle
+  final public let authenticityJSONFileName: Swift.String
+  final public let keyAgreementJSONFileName: Swift.String
+  public init(bundle: Foundation.Bundle, authenticityJSONFileName: Swift.String, keyAgreementJSONFileName: Swift.String)
+  @objc deinit
+}
+open class CoreServiceFactory {
+  final public let environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration
+  final public let dmsInformation: VisaFeatureModuleCore.DMSInformation
+  final public let deviceProfiler: VisaMobileFoundation.DeviceProfilerInterface
+  final public let mobileFoundationFactory: VisaMobileFoundation.MobileFoundationFactory
+  public init(environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration, dmsInformation: VisaFeatureModuleCore.DMSInformation, deviceProfiler: VisaMobileFoundation.DeviceProfilerInterface)
+  open func dataProvider() -> VisaMobileFoundation.DataProvider
+  public var calProvider: VisaFeatureModuleCore.CALInterface {
+    get
+    set
+  }
+  open func dmsDataManager() -> VisaFeatureModuleCore.DMSManagerDataInterface & VisaFeatureModuleCore.DMSManagerInterface
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers open class CryptoUtils {
+  public enum CryptoAlgorithm {
+    case sha1, sha224, sha256, sha384, sha512
+    public var HMACAlgorithm: CommonCrypto.CCHmacAlgorithm {
+      get
+    }
+    public typealias DigestAlgorithm = (Swift.UnsafeRawPointer, CommonCrypto.CC_LONG, Swift.UnsafeMutablePointer<Swift.CUnsignedChar>) -> Swift.UnsafeMutablePointer<Swift.CUnsignedChar>
+    public var digestAlgorithm: VisaFeatureModuleCore.CryptoUtils.CryptoAlgorithm.DigestAlgorithm {
+      get
+    }
+    public var digestLength: Swift.Int {
+      get
+    }
+    public static func == (a: VisaFeatureModuleCore.CryptoUtils.CryptoAlgorithm, b: VisaFeatureModuleCore.CryptoUtils.CryptoAlgorithm) -> Swift.Bool
+    public var hashValue: Swift.Int {
+      get
+    }
+    public func hash(into hasher: inout Swift.Hasher)
+  }
+  @objc deinit
+}
+extension String {
+  public var sha256: Swift.String {
+    get
+  }
+  public func fromBase64UrlToData() -> Foundation.Data?
+}
+public protocol DecryptableResponseService : AnyObject {
+  var operationQueue: Foundation.OperationQueue { get }
+  func makeAPICallWithCompletion(_ completion: @escaping VisaMobileFoundation.DataProviderCompletion)
+}
+extension DecryptableResponseService {
+  public func execute<T>(type: T.Type, authData: VisaFeatureModuleCore.DMSAuthenticationData, scheme: VisaFeatureModuleCore.JWEEncryptionScheme, completion: @escaping (VisaMobileFoundation.DataProviderResult<T, VisaFeatureModuleCore.APIError>) -> Swift.Void) where T : Swift.Decodable
+}
+public struct DefaultURLRequestFormatter : VisaMobileFoundation.URLRequestFormatter {
+  public init()
+  public var shouldIncludeHeaders: Swift.Bool
+  public func stringFromRequest(_ urlRequest: Foundation.URLRequest) -> Swift.String
+}
+public struct DefaultURLResponseFormatter : VisaMobileFoundation.URLResponseFormatter {
+  public init()
+  public var shouldIncludeHeaders: Swift.Bool
+  public func stringFromResponse(_ urlResponse: Foundation.URLResponse?, data: Foundation.Data?) -> Swift.String
+}
+@frozen public enum DeviceAuthenticateServiceResult {
+  case success(VisaFeatureModuleCore.DMSAuthenticateDeviceResponseBody, [Swift.AnyHashable : Any])
+  case failure(VisaFeatureModuleCore.APIError)
+}
+open class DeviceProfiledService : VisaFeatureModuleCore.BaseService {
+  final public let deviceProfiler: VisaMobileFoundation.DeviceProfilerInterface
+  public var deviceProfileSessionID: Swift.String?
+  public init(environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration, dataProvider: VisaMobileFoundation.DataProvider, deviceProfiler: VisaMobileFoundation.DeviceProfilerInterface)
+  override open func execute<T>(type: T.Type, completion: @escaping (VisaMobileFoundation.DataProviderResult<T, VisaFeatureModuleCore.APIError>) -> Swift.Void) where T : Swift.Decodable
+  override public init(environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration, dataProvider: VisaMobileFoundation.DataProvider)
+  @objc deinit
+}
+public struct DMSAuthenticateDeviceResponseBody : Swift.Codable {
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct Subject : Swift.Codable {
+  public let subjectID: Swift.String?
+  public let subjectEntity: Swift.String?
+  public let probes: [VisaFeatureModuleCore.Probe]?
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct Probe : Swift.Codable {
+  public let type: Swift.String
+  public let data: [VisaFeatureModuleCore.SubjectProbeData]
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct SubjectProbeData : Swift.Codable {
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public enum DMSAutheticationError : Swift.Error {
+  case unknown
+  case network
+  case cancel
+  public static func == (a: VisaFeatureModuleCore.DMSAutheticationError, b: VisaFeatureModuleCore.DMSAutheticationError) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public protocol DMSAutheticationListener : AnyObject {
+  func initialized(orchestrator: VisaFeatureModuleCore.DMSAutheticationOrchestrator, deviceProfileSessionID: Swift.String, authenticationData: VisaFeatureModuleCore.DMSAuthenticationData)
+  func didFailToInitializeWithError(_ error: VisaFeatureModuleCore.DMSAutheticationError, orchestrator: VisaFeatureModuleCore.DMSAutheticationOrchestrator)
+}
+open class DMSAutheticationOrchestrator {
+  weak public var listener: VisaFeatureModuleCore.DMSAutheticationListener?
+  final public let coreServiceFactory: VisaFeatureModuleCore.CoreServiceFactory
+  public init(listener: VisaFeatureModuleCore.DMSAutheticationListener?, coreServiceFactory: VisaFeatureModuleCore.CoreServiceFactory)
+  open func initialize()
+  @objc deinit
+}
+public enum DMSRegistrationError : Swift.Error {
+  case registrationFail
+  case network
+  case cancel
+  public static func == (a: VisaFeatureModuleCore.DMSRegistrationError, b: VisaFeatureModuleCore.DMSRegistrationError) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public enum DMSEnvironment {
+  case production
+  case development
+  public static func == (a: VisaFeatureModuleCore.DMSEnvironment, b: VisaFeatureModuleCore.DMSEnvironment) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public typealias DMSDataManagerInterfaces = VisaFeatureModuleCore.DMSManagerDataInterface & VisaFeatureModuleCore.DMSManagerInterface
+public typealias DMSRegisterDeviceCompletion = (VisaMobileFoundation.DataProviderResult<VisaFeatureModuleCore.DMSSessionKeyDataAndDeviceProfileSessionID, VisaFeatureModuleCore.DMSRegistrationError>) -> Swift.Void
+public protocol DMSManagerInterface {
+  func registerDevice(withCompletion completion: @escaping VisaFeatureModuleCore.DMSRegisterDeviceCompletion)
+}
+public protocol DMSManagerDataInterface {
+  var dmsSessionKeyData: VisaFeatureModuleCore.DMSSessionKeyData? { get }
+}
+public protocol DeviceEnrollmentAuthenticationCoordinatorProtocol {
+  func createPublicECKeyfromJWKJSON(withJSONData data: Foundation.Data) -> VisaMobileFoundation.PublicKey?
+  func deriveSessionKeys(keyAgreement: VisaMobileFoundation.VisaNetworkEncryptionKeyDerivationAgreement, info: VisaMobileFoundation.DeviceAuthenticationInfo, keysForSharedSecret: VisaMobileFoundation.KeyPair, ephemeralPublicKey: VisaMobileFoundation.PublicKey) throws -> [VisaMobileFoundation.VisaNetworkDerivedEncryptionKey]
+}
+extension DeviceEnrollmentAuthenticationCoordinator : VisaFeatureModuleCore.DeviceEnrollmentAuthenticationCoordinatorProtocol {
+}
+public struct DMSEnrollDeviceRequest : Swift.Codable {
+  public let appID: Swift.String
+  public let productCode: Swift.String
+  public let serviceProviderRequestKeys: [VisaFeatureModuleCore.ServiceProviderRequestKey]
+  public let subjectAlias: Swift.String
+  public let subjectEntity: Swift.String
+  public let subjectRequestKeys: [VisaFeatureModuleCore.SubjectRequestKey]
+  public let subjectPreferredName: Swift.String
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct ServiceProviderRequestKey : Swift.Codable {
+  public let jwk: VisaFeatureModuleCore.ServiceProviderRequestKeyJwk
+  public let keyFun: Swift.String
+  public let kidKnd: Swift.String
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct ServiceProviderRequestKeyJwk : Swift.Codable {
+  public let kid: Swift.String
+  public let use: Swift.String
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct SubjectRequestKey : Swift.Codable {
+  public let jwk: VisaFeatureModuleCore.SubjectRequestKeyJwk
+  public let keyFun: Swift.String
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct SubjectRequestKeyJwk : Swift.Codable {
+  public let crv: Swift.String?
+  public let kty: Swift.String
+  public let x: Swift.String
+  public let y: Swift.String
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct DMSEnrollDeviceResponse : Swift.Codable {
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct DMSSessionKeyData {
+  public let sessionKeys: [VisaMobileFoundation.VisaNetworkDerivedEncryptionKey]
+  public let vAppDeviceId: Swift.String
+  public let initialSubjectId: Swift.String
+  public let token: Swift.String
+  public let authenticityKeyId: Swift.String
+  public let expiresIn: Swift.Int
+  public init(sessionKeys: [VisaMobileFoundation.VisaNetworkDerivedEncryptionKey], vAppDeviceId: Swift.String, initialSubjectId: Swift.String, token: Swift.String, authenticityKeyId: Swift.String, expiresIn: Swift.Int)
+}
+public struct DMSSessionKeyDataAndDeviceProfileSessionID {
+  public let sessionKeyData: VisaFeatureModuleCore.DMSSessionKeyData
+  public let deviceProfileSessionID: Swift.String
+  public init(sessionKeyData: VisaFeatureModuleCore.DMSSessionKeyData, deviceProfileSessionID: Swift.String)
+}
+public struct EmptyResponse : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public protocol EnvironmentConfiguration {
+  var baseURL: Swift.String { get }
+  var appVersion: Swift.String { get }
+  var vAppId: Swift.String { get }
+  var externalAppId: Swift.String { get }
+  var sbox: Swift.String { get }
+  var correlationID: Swift.String { get }
+  var applicationName: Swift.String { get }
+  var thmOrgId: Swift.String { get }
+  var appRoot: Swift.String { get }
+  var apiAuthPath: Swift.String { get }
+  var productCode: Swift.String { get }
+  var splunkBaseURL: Swift.String { get }
+  var gitCommitHash: Swift.String? { get }
+  var isSecureEnvironment: Swift.Bool { get }
+  var softwareVersion: Swift.String { get }
+  var softwareID: Swift.String { get }
+  var environment: Swift.String? { get }
+  var offlineDummySessionKey: VisaFeatureModuleCore.DMSSessionKeyData? { get }
+  func softwareStatementClaimset(dfpSessionID: Swift.String) -> VisaFeatureModuleCore.SoftwareStatementClaimset
+}
+extension EnvironmentConfiguration {
+  public var defaultHeaderInformation: VisaMobileFoundation.HeaderInformation {
+    get
+  }
+}
+extension EnvironmentConfiguration {
+  public func softwareStatementClaimset(dfpSessionID: Swift.String) -> VisaFeatureModuleCore.SoftwareStatementClaimset
+}
+public enum JWEEncryptionConfigurationType {
+  case arm, business
+  public static func == (a: VisaFeatureModuleCore.JWEEncryptionConfigurationType, b: VisaFeatureModuleCore.JWEEncryptionConfigurationType) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public struct JWEEncryptionScheme {
+  public let algorithm: VisaMobileFoundation.JWEEncryptionAlgorithm
+  public let encryptionKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey
+  public let hashName: Swift.String
+  public init(configurationType: VisaFeatureModuleCore.JWEEncryptionConfigurationType, encryptionKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey)
+}
+public struct Log {
+  public static var shared: VisaFeatureModuleCore.Log
+  public static func info(feature: VisaMobileFoundation.LogFeature, text: Swift.String, file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+  public static func debug(feature: VisaMobileFoundation.LogFeature, text: Swift.String, file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+  public static func error(feature: VisaMobileFoundation.LogFeature, text: Swift.String, file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+  public var logger: VisaMobileFoundation.LoggerInterface
+  public var shouldDisplayFileFunctionLineInformation: Swift.Bool {
+    get
+    set
+  }
+  public var showLogFeatureLogLevels: [VisaMobileFoundation.LogFeatureLogLevel] {
+    get
+    set
+  }
+  public var todaysLogFileURL: Foundation.URL {
+    get
+  }
+}
+public enum ModuleError : Swift.Error {
+  case configuration(message: Swift.String)
+}
+@_inheritsConvenienceInitializers open class ModuleViewController<T> : UIKit.UIViewController {
+  open func inject(module: T)
+  @objc deinit
+  @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @objc required dynamic public init?(coder: Foundation.NSCoder)
+}
+public protocol FeatureModule {
+  func launch()
+}
+public protocol FeatureModuleDataSource : AnyObject {
+}
+public protocol FeatureModuleDelegate : AnyObject {
+  func initializationDidStart(module: VisaFeatureModuleCore.FeatureModule)
+  func initializationDidComplete(module: VisaFeatureModuleCore.FeatureModule, initialView: UIKit.UIViewController)
+  func initializationDidFail(module: VisaFeatureModuleCore.FeatureModule, error: VisaFeatureModuleCore.ModuleError)
+  func didCompleteWithSuccess(module: VisaFeatureModuleCore.FeatureModule, successMessage: Swift.String?)
+  func didCompleteWithError(module: VisaFeatureModuleCore.FeatureModule, error: VisaFeatureModuleCore.ModuleError)
+}
+public protocol FeatureModuleUIHandler : AnyObject {
+}
+public protocol FeatureModuleBuilder {
+  associatedtype FeatureModuleDelegateType
+  associatedtype FeatureModuleDatasourceType
+  associatedtype FeatureModuleUIHandlerType
+  associatedtype FeatureModuleType
+  func setDelegate(delegate: Self.FeatureModuleDelegateType)
+  func setDataSource(dataSource: Self.FeatureModuleDatasourceType)
+  func setUIHandler(uiHandler: Self.FeatureModuleUIHandlerType)
+  func build() throws -> Self.FeatureModuleType
+}
+public enum RenewAccessTokenError : VisaFeatureModuleCore.ServiceErrorMessage {
+  case network
+  case unknown
+  case cancelled
+  case incorrectInput
+  case service
+  case icmError(VisaFeatureModuleCore.ServiceErrorMessage)
+}
+public class RenewAccessTokenService : VisaFeatureModuleCore.BaseService, VisaFeatureModuleCore.AuthenticatedService, VisaFeatureModuleCore.Service {
+  public typealias R = VisaFeatureModuleCore.ServiceResult<VisaFeatureModuleCore.AuthorizedSubjectResponse, VisaFeatureModuleCore.RenewAccessTokenError>
+  final public let authenticationData: VisaFeatureModuleCore.DMSAuthenticationData
+  final public let accessToken: Swift.String?
+  public init(environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration, dataProvider: VisaMobileFoundation.DataProvider, accessToken: Swift.String? = nil, authenticationData: VisaFeatureModuleCore.DMSAuthenticationData)
+  public var scheme: VisaFeatureModuleCore.JWEEncryptionScheme {
+    get
+  }
+  override public func makeAPICallWithCompletion(_ completion: @escaping VisaMobileFoundation.DataProviderCompletion)
+  public func start(completion: @escaping (VisaFeatureModuleCore.ServiceResult<VisaFeatureModuleCore.AuthorizedSubjectResponse, VisaFeatureModuleCore.RenewAccessTokenError>) -> Swift.Void)
+  @objc deinit
+  override public init(environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration, dataProvider: VisaMobileFoundation.DataProvider)
+}
+@_inheritsConvenienceInitializers open class RetryableService : VisaFeatureModuleCore.BaseService {
+  public var isFinished: Swift.Bool {
+    get
+  }
+  override open func execute<T>(type: T.Type, completion: @escaping (VisaMobileFoundation.DataProviderResult<T, VisaFeatureModuleCore.APIError>) -> Swift.Void) where T : Swift.Decodable
+  override open func cancel()
+  @objc deinit
+  override public init(environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration, dataProvider: VisaMobileFoundation.DataProvider)
+}
+public enum APIError : Swift.Error {
+  case deviceProfile
+  case network
+  case unknown
+  case cancelled
+  case incorrectInput
+  case emptyData(headers: [Swift.AnyHashable : Any]?)
+  case server(status: Swift.Int, data: Foundation.Data?, headers: [Swift.AnyHashable : Any]?)
+}
+open class JSONParser<T> where T : Swift.Decodable {
+  public init()
+  @objc deinit
+}
+@frozen public enum ServiceResult<M, N> where N : Swift.Error {
+  case success(M)
+  case failure(N)
+}
+@frozen public enum ServiceEmptyResult<N> where N : Swift.Error {
+  case success
+  case failure(N)
+}
+public protocol Service {
+  associatedtype R
+  func start(completion: @escaping (Self.R) -> Swift.Void)
+  func cancel()
+}
+public typealias DeviceProfiledAuthenticatedService = VisaFeatureModuleCore.DeviceProfiledService & VisaFeatureModuleCore.AuthenticatedService
+extension APIError {
+  public init(networkError: VisaMobileFoundation.NetworkError)
+}
+public enum ServiceError : VisaFeatureModuleCore.ServiceErrorMessage {
+  case network
+  case cancelled
+  case business(VisaFeatureModuleCore.ServiceErrorMessage)
+  case incorrectInput
+  case service
+  case unknown
+}
+extension ServiceError {
+  public init(apiError: VisaFeatureModuleCore.APIError)
+}
+public protocol ServiceErrorMessage : Swift.Error {
+  var errorCode: Swift.String? { get }
+}
+extension ServiceErrorMessage {
+  public var errorCode: Swift.String? {
+    get
+  }
+}
+public class ServiceErrorMessageBuilder {
+  public init(data: Foundation.Data)
+  public func build() -> VisaFeatureModuleCore.ServiceErrorMessage?
+  @objc deinit
+}
+public struct SoftwareStatementClaimset : Swift.Codable {
+  public let softwareID: Swift.String
+  public let softwareVersion: Swift.String
+  public let softwareModeHint: Swift.String
+  public let oauth2Version: Swift.String
+  public let tenancyContext: VisaFeatureModuleCore.TenancyContext
+  public let uebas: [VisaFeatureModuleCore.Ueba]
+  public init(softwareID: Swift.String, softwareVersion: Swift.String, softwareModeHint: Swift.String, oauth2Version: Swift.String, tenancyContext: VisaFeatureModuleCore.TenancyContext, uebas: [VisaFeatureModuleCore.Ueba])
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct TenancyContext : Swift.Codable {
+  public let appID: Swift.String
+  public let productCode: Swift.String
+  public init(appID: Swift.String, productCode: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct Ueba : Swift.Codable {
+  public let uebaSource: Swift.String
+  public let uebaID: Swift.String
+  public init(uebaSource: Swift.String, uebaID: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public class VFMDMSAuthenticatedServiceUtility {
+  public init()
+  public func authorizationHeader(authenticationData: VisaFeatureModuleCore.DMSAuthenticationData, urlString: Swift.String, httpMethod: Swift.String, scopedAccessToken: Swift.String? = nil) -> Swift.String?
+  public func encryptData(scheme: VisaFeatureModuleCore.JWEEncryptionScheme, data: Foundation.Data) -> Foundation.Data?
+  @objc deinit
+}
+extension VisaFeatureModuleCore.APIEventType : Swift.Equatable {}
+extension VisaFeatureModuleCore.APIEventType : Swift.Hashable {}
+extension VisaFeatureModuleCore.APIEventType : Swift.RawRepresentable {}
+extension VisaFeatureModuleCore.ProbeType : Swift.Equatable {}
+extension VisaFeatureModuleCore.ProbeType : Swift.Hashable {}
+extension VisaFeatureModuleCore.BiometryStatus : Swift.Equatable {}
+extension VisaFeatureModuleCore.BiometryStatus : Swift.Hashable {}
+extension VisaFeatureModuleCore.BiometryResult : Swift.Equatable {}
+extension VisaFeatureModuleCore.BiometryResult : Swift.Hashable {}
+extension VisaFeatureModuleCore.BiometryType : Swift.Equatable {}
+extension VisaFeatureModuleCore.BiometryType : Swift.Hashable {}
+extension VisaFeatureModuleCore.CryptoUtils.CryptoAlgorithm : Swift.Equatable {}
+extension VisaFeatureModuleCore.CryptoUtils.CryptoAlgorithm : Swift.Hashable {}
+extension VisaFeatureModuleCore.DMSAutheticationError : Swift.Equatable {}
+extension VisaFeatureModuleCore.DMSAutheticationError : Swift.Hashable {}
+extension VisaFeatureModuleCore.DMSRegistrationError : Swift.Equatable {}
+extension VisaFeatureModuleCore.DMSRegistrationError : Swift.Hashable {}
+extension VisaFeatureModuleCore.DMSEnvironment : Swift.Equatable {}
+extension VisaFeatureModuleCore.DMSEnvironment : Swift.Hashable {}
+extension VisaFeatureModuleCore.JWEEncryptionConfigurationType : Swift.Equatable {}
+extension VisaFeatureModuleCore.JWEEncryptionConfigurationType : Swift.Hashable {}

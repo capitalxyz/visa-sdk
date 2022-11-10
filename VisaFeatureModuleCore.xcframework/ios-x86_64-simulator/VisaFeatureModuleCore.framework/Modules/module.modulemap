@@ -1,0 +1,6 @@
+framework module VisaFeatureModuleCore {
+  umbrella header "VisaFeatureModuleCore.h"
+
+  export *
+  module * { export * }
+}

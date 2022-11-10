@@ -1,0 +1,131 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)
+// swift-module-flags: -target arm64-apple-ios12.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name VisaInAppModuleCore
+import Foundation
+import Swift
+import UIKit
+import VisaFeatureModuleCore
+import VisaMobileFoundation
+@_inheritsConvenienceInitializers open class VICBaseServiceFactory : VisaFeatureModuleCore.CoreServiceFactory {
+  override public init(environmentConfiguration: VisaFeatureModuleCore.EnvironmentConfiguration, dmsInformation: VisaFeatureModuleCore.DMSInformation, deviceProfiler: VisaMobileFoundation.DeviceProfilerInterface)
+  public class func getDefaultBaseServiceFactory() throws -> VisaInAppModuleCore.VICBaseServiceFactory
+  @objc deinit
+}
+public enum VICBaseServiceFactoryError : Swift.Error {
+  case emptyExternalAppId
+  public static func == (a: VisaInAppModuleCore.VICBaseServiceFactoryError, b: VisaInAppModuleCore.VICBaseServiceFactoryError) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public protocol VICDeviceProfilingHeaderAppendable {
+  var headerInformation: VisaMobileFoundation.HeaderInformation { get set }
+}
+extension VICDeviceProfilingHeaderAppendable where Self : VisaFeatureModuleCore.BaseService {
+  public func appendDeviceProfilingHeader() -> VisaMobileFoundation.NetworkError?
+}
+public enum VICJWEEncryptionKeyType {
+  case authenticityKey
+  case identityConfidentialityKey
+  case payloadKey
+  public static func == (a: VisaInAppModuleCore.VICJWEEncryptionKeyType, b: VisaInAppModuleCore.VICJWEEncryptionKeyType) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public protocol VICDMSAuthenticatedService : VisaFeatureModuleCore.Service {
+  var scheme: (configurationType: VisaFeatureModuleCore.JWEEncryptionConfigurationType, encryptionKeyType: VisaInAppModuleCore.VICJWEEncryptionKeyType) { get }
+  var headerInformation: VisaMobileFoundation.HeaderInformation { get set }
+}
+public let vicNetworkErrorStatusForEmptyDMSAuthenticationDataAndDeviceProfileSessionId: Swift.Int
+extension VICDMSAuthenticatedService where Self : VisaFeatureModuleCore.BaseService {
+  public func appendAuthorizationHeader(urlString: Swift.String, httpMethod: Swift.String, scopedAccessToken: Swift.String? = nil) -> VisaMobileFoundation.NetworkError?
+  public func encryptData(_ data: Foundation.Data) -> Foundation.Data?
+}
+extension VICDMSAuthenticatedService where Self : VisaFeatureModuleCore.DecryptableResponseService {
+  public func decryptAndExecute<T>(type _: T.Type, completion: @escaping (VisaMobileFoundation.DataProviderResult<T, VisaFeatureModuleCore.APIError>) -> Swift.Void) where T : Swift.Decodable
+}
+@_hasMissingDesignatedInitializers public class VICPersistentStoreHelper {
+  public init()
+  public func updateAuthData(otherInfo: [Swift.String : Any]? = nil)
+  public func clearSessionData()
+  public func correlationId() -> Swift.String
+  @objc deinit
+}
+public enum VICSessionInitializationError : Swift.Error, Swift.Equatable {
+  public static func == (lhs: VisaInAppModuleCore.VICSessionInitializationError, rhs: VisaInAppModuleCore.VICSessionInitializationError) -> Swift.Bool
+  case deviceProfile
+  case registrationFail
+  case network
+  case unknown
+  case cancelled
+  case incorrectInput
+  case jailBrokenDevice
+  case emptyData(headers: [Swift.AnyHashable : Any]?)
+  case server(status: Swift.Int, data: Foundation.Data?, headers: [Swift.AnyHashable : Any]?)
+}
+public enum VICSessionInitializationErrorLocation {
+  case deviceAuthentication
+  case sdkAuthorization
+  case jailBrokenDevice
+  case unknown
+  public static func == (a: VisaInAppModuleCore.VICSessionInitializationErrorLocation, b: VisaInAppModuleCore.VICSessionInitializationErrorLocation) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public struct VICSDKInitializationError {
+  public let error: VisaInAppModuleCore.VICSessionInitializationError
+  public let location: VisaInAppModuleCore.VICSessionInitializationErrorLocation
+  public init(error: VisaInAppModuleCore.VICSessionInitializationError, location: VisaInAppModuleCore.VICSessionInitializationErrorLocation)
+}
+public protocol VICSDKInitializationListener : AnyObject {
+  func sdkInitialized(nonce: Swift.String)
+  func sdkInitializationFailed(error: VisaInAppModuleCore.VICSDKInitializationError)
+}
+public class VICSDKInitializationOrchestrator {
+  public init(listener: VisaInAppModuleCore.VICSDKInitializationListener?) throws
+  public func initialize()
+  @objc deinit
+}
+@objc public class VisaInAppConfig : ObjectiveC.NSObject {
+  @objc final public let environment: VisaInAppModuleCore.VisaInAppEnvironment
+  @objc final public let appId: Swift.String
+  @objc public var otherInfo: [Swift.String : Any]?
+  @objc public init(environment: VisaInAppModuleCore.VisaInAppEnvironment, appId: Swift.String)
+  @objc deinit
+  @objc override dynamic public init()
+}
+@objc public class VisaInAppConfigException : Foundation.NSError {
+  @objc final public let message: Swift.String
+  public init(message: Swift.String)
+  @objc required dynamic public init?(coder _: Foundation.NSCoder)
+  @objc deinit
+  @objc override dynamic public init(domain: Swift.String, code: Swift.Int, userInfo dict: [Swift.String : Any]? = nil)
+}
+@_inheritsConvenienceInitializers @objc public class VisaInAppCore : ObjectiveC.NSObject {
+  @objc public class func configure(config: VisaInAppModuleCore.VisaInAppConfig) throws
+  @objc deinit
+  @objc override dynamic public init()
+}
+@objc public enum VisaInAppEnvironment : Swift.Int, Swift.Encodable {
+  case Sandbox
+  case Production
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+extension VisaInAppModuleCore.VICBaseServiceFactoryError : Swift.Equatable {}
+extension VisaInAppModuleCore.VICBaseServiceFactoryError : Swift.Hashable {}
+extension VisaInAppModuleCore.VICJWEEncryptionKeyType : Swift.Equatable {}
+extension VisaInAppModuleCore.VICJWEEncryptionKeyType : Swift.Hashable {}
+extension VisaInAppModuleCore.VICSessionInitializationErrorLocation : Swift.Equatable {}
+extension VisaInAppModuleCore.VICSessionInitializationErrorLocation : Swift.Hashable {}
+extension VisaInAppModuleCore.VisaInAppEnvironment : Swift.Equatable {}
+extension VisaInAppModuleCore.VisaInAppEnvironment : Swift.Hashable {}
+extension VisaInAppModuleCore.VisaInAppEnvironment : Swift.RawRepresentable {}

@@ -1,0 +1,4 @@
+framework module VisaInAppModuleCore {
+  header "VisaInAppModuleCore-Swift.h"
+  requires objc
+}
