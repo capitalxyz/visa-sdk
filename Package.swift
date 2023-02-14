@@ -6,6 +6,10 @@ let package = Package(
     name: "VisaSDK",
     products: [
         .library(
+            name: "VisaAnalytics",
+            targets: ["VisaAnalytics"]
+        ),
+        .library(
             name: "VisaMobileFoundation",
             targets: ["VisaMobileFoundation"]
         ),
@@ -42,6 +46,10 @@ let package = Package(
         .binaryTarget(
             name: "VisaFeatureModuleCore",
             path: "VisaFeatureModuleCore.xcframework"
+        ),
+        .binaryTarget(
+            name: "VisaAnalytics",
+            path: "VisaAnalytics.xcframework"
         ),
         .binaryTarget(
             name: "VisaInAppModuleCore",
