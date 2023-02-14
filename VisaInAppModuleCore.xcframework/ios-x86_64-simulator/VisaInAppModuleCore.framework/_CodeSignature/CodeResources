@@ -34,43 +34,43 @@
 		</data>
 		<key>Headers/VisaInAppModuleCore-Swift.h</key>
 		<data>
-		jJv2t8sFPQKN9kAfYNIRr38AWpc=
+		Y5rLu4fOUtIEF2OQrCxsadHbhe4=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		76G1BJtiXgTOJBejljV1g1MjQ9Y=
+		3dSGFDQE4QX/jby6flal/pYm0wg=
 		</data>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		t8xcgnyTjxhYVEFOJcjmntT4vXc=
+		N7NDv9NQqEaEY9s+CpKlzTPgb94=
 		</data>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/Project/x86_64.swiftsourceinfo</key>
 		<data>
-		t8xcgnyTjxhYVEFOJcjmntT4vXc=
+		N7NDv9NQqEaEY9s+CpKlzTPgb94=
 		</data>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		WvyCO0h4KeANG+HK1vL5uBpB3rA=
+		WOQXsfEbH3uhamLDTpOlBhz0x5w=
 		</data>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		vgXO2bDPXhUXivSACDIVyvs7U24=
+		1IeTB2R9jBJwyqVovtPYQeTNcTI=
 		</data>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		e4iNRINSPOFzHqSavkGrbriLGRI=
+		qNutYELC6Ubg88pMQqlYsyApbx8=
 		</data>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64.swiftdoc</key>
 		<data>
-		WvyCO0h4KeANG+HK1vL5uBpB3rA=
+		WOQXsfEbH3uhamLDTpOlBhz0x5w=
 		</data>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64.swiftinterface</key>
 		<data>
-		vgXO2bDPXhUXivSACDIVyvs7U24=
+		1IeTB2R9jBJwyqVovtPYQeTNcTI=
 		</data>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64.swiftmodule</key>
 		<data>
-		e4iNRINSPOFzHqSavkGrbriLGRI=
+		qNutYELC6Ubg88pMQqlYsyApbx8=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -132,63 +132,63 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			gf6AfDRa3kkgjz60L1+0prt2p/dcoLSg/71jQdVCgYs=
+			/Y9Ac+ir+hLjN2d3ncU+7pLei7sgAbgDxf1kYbl9VmE=
 			</data>
 		</dict>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5RD7eG7T51P/7cpHSlnOgewVTbjAywVEoaSh7NIpsFs=
+			aAZoBTSkImReNbI6XrVXAn3ezxOGFV3i3y3VfGTqzck=
 			</data>
 		</dict>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/Project/x86_64.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5RD7eG7T51P/7cpHSlnOgewVTbjAywVEoaSh7NIpsFs=
+			aAZoBTSkImReNbI6XrVXAn3ezxOGFV3i3y3VfGTqzck=
 			</data>
 		</dict>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			tu7gRgHL4x811lNj4mZQi/oPeXZxt66Hz8zdon+RXMs=
+			pH6Hyk3NXqWxyiSljQsuSv79amQHVDgcMEcYQMC4OEk=
 			</data>
 		</dict>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			O4TAQXPctuDJqWLoQ4DH/B24WmBkNGOiybzVbY1r0uY=
+			TQ2dSyANn9ote+JX+ItvU64tUMOWFCtfEwq3O1oW1/4=
 			</data>
 		</dict>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			wtO4FomKJC51QocsrksL8gHwin6b4Kp7kydX55Fma8k=
+			yVSnjNPBS2A7/tO3mAuDOpwd5W2AIYBEqy4rz4dJt4s=
 			</data>
 		</dict>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			tu7gRgHL4x811lNj4mZQi/oPeXZxt66Hz8zdon+RXMs=
+			pH6Hyk3NXqWxyiSljQsuSv79amQHVDgcMEcYQMC4OEk=
 			</data>
 		</dict>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			O4TAQXPctuDJqWLoQ4DH/B24WmBkNGOiybzVbY1r0uY=
+			TQ2dSyANn9ote+JX+ItvU64tUMOWFCtfEwq3O1oW1/4=
 			</data>
 		</dict>
 		<key>Modules/VisaInAppModuleCore.swiftmodule/x86_64.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			wtO4FomKJC51QocsrksL8gHwin6b4Kp7kydX55Fma8k=
+			yVSnjNPBS2A7/tO3mAuDOpwd5W2AIYBEqy4rz4dJt4s=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

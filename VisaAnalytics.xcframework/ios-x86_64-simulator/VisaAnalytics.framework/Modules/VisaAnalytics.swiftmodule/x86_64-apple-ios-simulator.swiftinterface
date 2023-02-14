@@ -1,0 +1,44 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.5.2 (swiftlang-1300.0.47.5 clang-1300.0.29.30)
+// swift-module-flags: -target x86_64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name VisaAnalytics
+import CommonCrypto/*.CC_LONG*/
+import CommonCrypto/*.CC_SHA256*/
+import CommonCrypto/*.CC_SHA256_DIGEST_LENGTH*/
+import CoreData
+import Foundation
+import Swift
+import UIKit.UIDevice
+import UIKit
+@_exported import VisaAnalytics
+import VisaFeatureModuleCore
+import VisaMobileFoundation
+import _Concurrency
+extension VisaFeatureModuleCore.EnvironmentConfiguration {
+  public var analyticsEnvironment: VisaAnalytics.AnalyticsEnvironment {
+    get
+  }
+}
+@frozen public enum AnalyticsEnvironment {
+  case production
+  case sandbox
+  case aacert
+  case qa
+  case custom(name: Swift.String?, baseURL: Swift.String)
+}
+@frozen public struct AnalyticsConfiguration {
+  public let environment: VisaAnalytics.AnalyticsEnvironment
+  public let expiryTime: Foundation.TimeInterval
+  public let timerInterval: Foundation.TimeInterval
+  public let maxEventByteSize: Swift.UInt
+  public let maxPayloadByteSize: Swift.UInt
+  public let maxPayloadEventCount: Swift.UInt
+  public init(environment: VisaAnalytics.AnalyticsEnvironment, expiryTime: Foundation.TimeInterval = 172800, timerInterval: Foundation.TimeInterval = 10, maxEventByteSize: Swift.UInt = 8000, maxPayloadByteSize: Swift.UInt = 16384, maxPayloadEventCount: Swift.UInt = 20)
+}
+@_hasMissingDesignatedInitializers final public class AnalyticsGateway {
+  public static func initSDK(_ sdkConfiguration: VisaAnalytics.AnalyticsConfiguration)
+  public static func createInstance(componentId: Swift.String?) -> VisaMobileFoundation.AnalyticsInterface
+  public static func setUserProperty(key: Swift.String, value: Swift.String?)
+  @objc deinit
+}
+extension VisaAnalytics.AnalyticsEnvironment : Swift.Sendable {}
+extension VisaAnalytics.AnalyticsConfiguration : Swift.Sendable {}

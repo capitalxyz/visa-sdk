@@ -1,0 +1,11 @@
+framework module VisaAnalytics {
+  umbrella header "VisaAnalytics.h"
+
+  export *
+  module * { export * }
+}
+
+module VisaAnalytics.Swift {
+    header "VisaAnalytics-Swift.h"
+    requires objc
+}

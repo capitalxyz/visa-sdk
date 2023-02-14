@@ -1,40 +1,54 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)
-// swift-module-flags: -target x86_64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name VisaMobileFoundation
+// swift-compiler-version: Apple Swift version 5.5.2 (swiftlang-1300.0.47.5 clang-1300.0.29.30)
+// swift-module-flags: -target x86_64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name VisaMobileFoundation
 import CommonCrypto
+import Darwin
 import Foundation
+import MachO
 import RLTMXProfiling
 import RLTMXProfilingConnections
 import Security
 import Swift
 import UIKit
 @_exported import VisaMobileFoundation
+import _Concurrency
 import os.log
 import os
 public enum AESKeySizeBits : Swift.Int {
   case aes128, aes256
-  public typealias RawValue = Swift.Int
   public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
   }
 }
 public enum AESKeySizeBytes : Swift.Int {
   case aes128, aes256
-  public typealias RawValue = Swift.Int
   public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
   }
 }
 public enum AESEncryptionFlavor : Swift.Int {
   case aesGCM128, aesGCM256
-  public typealias RawValue = Swift.Int
   public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
   }
 }
+public enum FileIntegrityCheck {
+  case bundleID(Swift.String)
+  case mobileProvision(Swift.String)
+  case machO(Swift.String, Swift.String)
+}
+extension VisaMobileFoundation.FileIntegrityCheck {
+  public var description: Swift.String {
+    get
+  }
+}
+public typealias FileIntegrityCheckResult = (result: Swift.Bool, hitChecks: [VisaMobileFoundation.FileIntegrityCheck])
 public protocol AnalyticsTime {
   func now() -> Swift.String
 }
@@ -44,17 +58,38 @@ public protocol AnalyticsEvent {
   func build() -> [Swift.String : Swift.String]
   func getName() -> Swift.String
 }
-extension AnalyticsEvent {
+extension VisaMobileFoundation.AnalyticsEvent {
   public func getName() -> Swift.String
 }
 public struct EventProperty {
   public init(name: Swift.String, category: Swift.String? = nil, label: Swift.String? = nil, screenName: Swift.String, other: [Swift.String : Swift.String]? = nil)
 }
-extension AnalyticsTime {
+extension VisaMobileFoundation.AnalyticsTime {
   public func now() -> Swift.String
 }
-extension AnalyticsEvent {
+extension VisaMobileFoundation.AnalyticsEvent {
   public func build() -> [Swift.String : Swift.String]
+}
+public enum NetworkType : Swift.String, Swift.CaseIterable {
+  case vpn
+  case wifi
+  case cellular
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [VisaMobileFoundation.NetworkType]
+  public typealias RawValue = Swift.String
+  public static var allCases: [VisaMobileFoundation.NetworkType] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class NetworkUtils {
+  public static var ipAddress: Swift.String {
+    get
+  }
+  public static func getAddress(for network: VisaMobileFoundation.NetworkType) -> Swift.String?
+  @objc deinit
 }
 public protocol AnalyticsInterface : AnyObject {
   func push(event: VisaMobileFoundation.AnalyticsEvent)
@@ -71,8 +106,8 @@ public struct AuthenticatedMessagePopTokenHeader : Swift.Codable {
   public let kid: Swift.String
   public let alg: Swift.String
   public var typ: Swift.String
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct AuthenticatedMessagePopTokenClaimset : Swift.Codable {
   public let iss: Swift.String?
@@ -93,28 +128,28 @@ public struct AuthenticatedMessagePopTokenClaimset : Swift.Codable {
   public let auth: VisaMobileFoundation.AuthenticatedMessageAuthObject?
   public let bodyHash: Swift.String?
   public let body: VisaMobileFoundation.AuthenticatedMessageProtectedObject?
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct AuthenticatedMessageConfirmationClaim : Swift.Codable {
   public let kid: Swift.String?
   public let tth: Swift.String?
   public let tkn: Swift.String?
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct AuthenticatedMessageAuthObject : Swift.Codable {
   public let scheme: Swift.String?
   public let params: VisaMobileFoundation.AuthenticatedMessageProtectedObject?
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct AuthenticatedMessageProtectedObject : Swift.Codable {
   public let names: [Swift.String]?
   public let include: Swift.String?
   public let hash: Swift.String?
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct AuthenticatedMessageConfiguration {
   public init(httpMethod: Swift.String, deviceId: Swift.String, accessToken: Swift.String, signingKeyData: Foundation.Data, signingKeyKid: Swift.String)
@@ -123,6 +158,11 @@ public struct AuthenticatedMessageConfiguration {
   public let signingKeyData: Foundation.Data
   public let signingKeyKid: Swift.String
   public let httpMethod: Swift.String
+}
+public protocol CaseIterableDefaultsLast : Swift.CaseIterable, Swift.Decodable, Swift.Encodable, Swift.RawRepresentable where Self.AllCases : Swift.BidirectionalCollection, Self.RawValue : Swift.Decodable {
+}
+extension VisaMobileFoundation.CaseIterableDefaultsLast {
+  public init(from decoder: Swift.Decoder) throws
 }
 public class CompositeLogger : VisaMobileFoundation.LoggerInterface {
   public var loggers: [VisaMobileFoundation.LoggerInterface] {
@@ -140,6 +180,13 @@ public class CompositeLogger : VisaMobileFoundation.LoggerInterface {
   }
   @objc deinit
 }
+public class Connectivity {
+  public init(reachability: VisaMobileFoundation.VisaReachability = VisaReachability.forInternetConnection())
+  public var isReachable: Swift.Bool {
+    get
+  }
+  @objc deinit
+}
 public class ConsoleLogger : VisaMobileFoundation.LoggerInterface {
   public var shouldDisplayFileFunctionLineInformation: Swift.Bool
   public var showLogFeatureLogLevels: [VisaMobileFoundation.LogFeatureLogLevel]
@@ -148,10 +195,10 @@ public class ConsoleLogger : VisaMobileFoundation.LoggerInterface {
   @objc deinit
 }
 public typealias Base64UrlData = Foundation.Data
-extension Data {
+extension Foundation.Data {
   public func toBase64UrlString() -> Swift.String
 }
-extension LogFeature {
+extension VisaMobileFoundation.LogFeature {
   public static let dataProvider: VisaMobileFoundation.LogFeature
 }
 public typealias DataProviderCompletion = (VisaMobileFoundation.DataProviderResult<Foundation.Data, VisaMobileFoundation.NetworkError>) -> Swift.Void
@@ -207,11 +254,6 @@ public class DefaultStorageProvider : VisaMobileFoundation.StorageProviderInterf
   public func delete(key: Swift.String) throws
   @objc deinit
 }
-public protocol CaseIterableDefaultsLast : Swift.CaseIterable, Swift.Decodable, Swift.Encodable, Swift.RawRepresentable where Self.AllCases : Swift.BidirectionalCollection, Self.RawValue : Swift.Decodable {
-}
-extension CaseIterableDefaultsLast {
-  public init(from decoder: Swift.Decoder) throws
-}
 public struct DeviceAuthenticationInfo {
   public init(authData: VisaMobileFoundation.AuthData, vACDeviceID: Swift.String)
   public let authData: VisaMobileFoundation.AuthData
@@ -220,10 +262,10 @@ public struct DeviceAuthenticationInfo {
 public enum ValidateDeviceAuthError : Swift.Error {
   case creatingSharedSecret, encodingData, derivingKeys, verifyingMacTag
   public static func == (a: VisaMobileFoundation.ValidateDeviceAuthError, b: VisaMobileFoundation.ValidateDeviceAuthError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public class DeviceEnrollmentAuthenticationCoordinator {
   public init()
@@ -262,19 +304,19 @@ public class DefaultProfilerConfiguration : VisaMobileFoundation.ProfilerConfigu
 public enum ECDSASignatureVerificationError : Swift.Error {
   case jwsMalformed, invalidSignature, invalidHeaderOrClaimset, signatureVerifiationFailed, missingKey
   public static func == (a: VisaMobileFoundation.ECDSASignatureVerificationError, b: VisaMobileFoundation.ECDSASignatureVerificationError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public enum ECKeyError : Swift.Error {
   case notAPublicEcKey
   case notAnECKey
   public static func == (a: VisaMobileFoundation.ECKeyError, b: VisaMobileFoundation.ECKeyError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public class ECKeyGenerator {
   public init()
@@ -284,22 +326,34 @@ public class ECKeyGenerator {
   public func createPublicKeyFromCoordinates(ecKeyCoordinates: VisaMobileFoundation.ECKeyCoordinates) -> VisaMobileFoundation.PublicKey?
   @objc deinit
 }
+open class SecurityDetector {
+  public init()
+  open func isJailbreak() -> Swift.Bool
+  open func amIReverseEngineered() -> Swift.Bool
+  open func amIProxied() -> Swift.Bool
+  open func amIRunInEmulator() -> Swift.Bool
+  open func amIDebugged() -> Swift.Bool
+  @objc deinit
+}
 public class EllipticCurveCertificateParser {
   public init()
   public func getPrivateKey(fromData p12Data: Foundation.Data) -> VisaMobileFoundation.PrivateKey?
   public func getPublicKey(fromData derData: Foundation.Data) -> VisaMobileFoundation.PublicKey?
   @objc deinit
 }
-extension Data {
+extension Swift.Encodable {
+  public func toJSON(_ encoder: Foundation.JSONEncoder? = nil) -> Swift.String?
+}
+extension Foundation.Data {
   public func hexEncodedString() -> Swift.String
   public static func dataWithHexString(hex: Swift.String) -> Foundation.Data
   public static func randomBytes(length: Swift.Int) -> Foundation.Data
 }
-extension Data {
+extension Foundation.Data {
   public init<T>(from value: T)
   public func to<T>(type _: T.Type) -> T
 }
-extension String {
+extension Swift.String {
   public var hexadecimal: Foundation.Data? {
     get
   }
@@ -307,10 +361,10 @@ extension String {
   public func toBase64Encoded() -> Swift.String?
   public func fromBase64ToString() -> Swift.String?
 }
-extension String {
+extension Swift.String {
   public func base64url() -> Swift.String
 }
-extension Data {
+extension Foundation.Data {
   public func base64url() -> Swift.String
 }
 public typealias PublicKey = Security.SecKey
@@ -346,13 +400,6 @@ public class FileLogger : VisaMobileFoundation.LoggerInterface {
   }
   @objc deinit
 }
-public class Connectivity {
-  public init(reachability: VisaMobileFoundation.VisaReachability = VisaReachability.forInternetConnection())
-  public var isReachable: Swift.Bool {
-    get
-  }
-  @objc deinit
-}
 public enum HashFunction {
   case sha256
   case sha384
@@ -362,10 +409,10 @@ public enum HashFunction {
   }
   public func digestFor(_ data: Foundation.Data) -> Foundation.Data
   public static func == (a: VisaMobileFoundation.HashFunction, b: VisaMobileFoundation.HashFunction) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public class HeaderInformation {
   public var headerFields: [Swift.String : Swift.String] {
@@ -393,10 +440,6 @@ public protocol NowProvider {
   final public class func fix(to time: Foundation.Date)
   @objc deinit
 }
-@_hasMissingDesignatedInitializers public class JailBreakDetector {
-  public static func isJailbreak() -> Swift.Bool
-  @objc deinit
-}
 public struct JWEEncryptedPayload {
   public let jweString: Swift.String
   public init(plaintextPayload: Foundation.Data, algorithm: VisaMobileFoundation.JWEEncryptionAlgorithm, encryptionKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey) throws
@@ -405,12 +448,31 @@ public struct JWEDecryptedPayload {
   public let plaintextPayload: VisaMobileFoundation.DecryptedPayload
   public init(jweString: Swift.String, algorithm: VisaMobileFoundation.JWEEncryptionAlgorithm, encryptionKey: VisaMobileFoundation.VisaNetworkDerivedEncryptionKey) throws
 }
+public typealias FailedCheck = (check: VisaMobileFoundation.JailbreakCheck, failMessage: Swift.String)
+public enum JailbreakCheck : Swift.CaseIterable {
+  case urlSchemes
+  case existenceOfSuspiciousFiles
+  case suspiciousFilesCanBeOpened
+  case restrictedDirectoriesWriteable
+  case fork
+  case symbolicLinks
+  case dyld
+  public static func == (a: VisaMobileFoundation.JailbreakCheck, b: VisaMobileFoundation.JailbreakCheck) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public typealias AllCases = [VisaMobileFoundation.JailbreakCheck]
+  public static var allCases: [VisaMobileFoundation.JailbreakCheck] {
+    get
+  }
+  public var hashValue: Swift.Int {
+    get
+  }
+}
 public typealias EncryptedJWEString = Swift.String
 public typealias DecryptedPayload = [Swift.String : Any]
 public enum JWEEncryptionAlgorithm : Swift.String {
   case direct, keyWrap
-  public typealias RawValue = Swift.String
   public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
   }
@@ -418,10 +480,10 @@ public enum JWEEncryptionAlgorithm : Swift.String {
 public enum JWEParsingError : Swift.Error {
   case malformedPayload, failedToSerializeAAD, failedToSerializeHeader, malformedHeader, failedToSerializePlaintextPayload
   public static func == (a: VisaMobileFoundation.JWEParsingError, b: VisaMobileFoundation.JWEParsingError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public struct JWEObject {
   public let string: Swift.String
@@ -434,16 +496,13 @@ public struct ServiceProviderJSONWebKey : Swift.Codable {
   public let kid: Swift.String
   public let x: Swift.String
   public let y: Swift.String
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public class JWKReader {
   public init()
   public func jwkObjectFromJSONData(data: Foundation.Data) -> VisaMobileFoundation.ServiceProviderJSONWebKey?
   @objc deinit
-}
-extension Encodable {
-  public func toJSON(_ encoder: Foundation.JSONEncoder? = nil) -> Swift.String?
 }
 public struct JWSComponents {
   public let header: Swift.String
@@ -462,11 +521,11 @@ public class SymmetricKeySignatureManager {
 }
 public enum LogLevel : Swift.Int {
   case info, debug, error
+  public init?(rawValue: Swift.Int)
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
   }
-  public init?(rawValue: Swift.Int)
 }
 public class LogFeature : Swift.Equatable {
   final public let identifier: Swift.String
@@ -546,10 +605,10 @@ public enum StorageType {
   case nonsecure
   case secure
   public static func == (a: VisaMobileFoundation.StorageType, b: VisaMobileFoundation.StorageType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public enum StorageProviderError : Swift.Error {
   case unsupportedType
@@ -561,11 +620,11 @@ public struct StorageProviderFactory {
 }
 public typealias Base64UrlString = Swift.String
 public typealias Base64String = Swift.String
-extension String {
+extension Swift.String {
   public func toData() -> Foundation.Data?
   public func toBase64() -> Swift.String
 }
-extension String {
+extension Swift.String {
   public func toBase64Url() -> Swift.String
 }
 public class TemporaryFile : Swift.Equatable {
@@ -588,10 +647,10 @@ public enum URLRequestMethod {
     get
   }
   public static func == (a: VisaMobileFoundation.URLRequestMethod, b: VisaMobileFoundation.URLRequestMethod) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public protocol URLResponseFormatter {
   var shouldIncludeHeaders: Swift.Bool { get set }
@@ -615,10 +674,10 @@ public protocol URLResponseFormatter {
 public enum VisaNetworkCrypterError : Swift.Error {
   case failedToEncryptData, failedToDecryptData, aesKeyNot128Or256BitLength
   public static func == (a: VisaMobileFoundation.VisaNetworkCrypterError, b: VisaMobileFoundation.VisaNetworkCrypterError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public struct AESEncryptionResult {
   public let ciphertext: VisaMobileFoundation.Ciphertext
@@ -633,10 +692,10 @@ public class VisaNetworkCrypter {
 public enum KeyCreationError : Swift.Error {
   case invalidKeyLength
   public static func == (a: VisaMobileFoundation.KeyCreationError, b: VisaMobileFoundation.KeyCreationError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public struct VisaNetworkDerivedEncryptionKey {
   public let data: Foundation.Data
@@ -650,41 +709,54 @@ public enum VisaNetworkEncryptionKeyPurpose : Swift.String {
   case authenticity
   case identityConfidentiality
   case macValidation
+  public init?(rawValue: Swift.String)
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
   }
-  public init?(rawValue: Swift.String)
 }
 public struct VisaNetworkEncryptionKeyDerivationAgreement : Swift.Codable {
   public let parts: [VisaMobileFoundation.VisaNetworkEncryptionKeyMaterialPart]
   public let totalBitLength: Swift.Int
   public init(parts: [VisaMobileFoundation.VisaNetworkEncryptionKeyMaterialPart])
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct VisaNetworkEncryptionKeyMaterialPart : Swift.Codable {
   public let keyFunction: Swift.String
   public let keyIdentifier: Swift.String
   public let bitLength: Swift.Int
   public init(keyFunction: VisaMobileFoundation.VisaNetworkEncryptionKeyPurpose, keyIdentifier: Swift.String, bitLength: Swift.Int)
-  public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
-extension VisaNetworkEncryptionKeyMaterialPart : Swift.Equatable {
+extension VisaMobileFoundation.VisaNetworkEncryptionKeyMaterialPart : Swift.Equatable {
   public static func == (lhs: VisaMobileFoundation.VisaNetworkEncryptionKeyMaterialPart, rhs: VisaMobileFoundation.VisaNetworkEncryptionKeyMaterialPart) -> Swift.Bool
 }
 public enum KeyAgreementClaimsetError : Swift.Error {
   case invalidKeyAgreement, invalidEphemeralKey
   public static func == (a: VisaMobileFoundation.KeyAgreementClaimsetError, b: VisaMobileFoundation.KeyAgreementClaimsetError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
 }
 public struct VisaNetworkEncryptionKeyDerivationClaimset {
   public let json: [Swift.String : Any]
   public init(keyAgreement: VisaMobileFoundation.VisaNetworkEncryptionKeyDerivationAgreement, serviceProviderKeyAgreementKeyIdentifier: Swift.String, ephemeralKey: VisaMobileFoundation.PublicKey, subjectId: Swift.String) throws
+}
+@_hasMissingDesignatedInitializers public class IOSSecuritySuite {
+  public static func amIJailbroken() -> Swift.Bool
+  public static func amIJailbrokenWithFailMessage() -> (jailbroken: Swift.Bool, failMessage: Swift.String)
+  public static func amIJailbrokenWithFailedChecks() -> (jailbroken: Swift.Bool, failedChecks: [VisaMobileFoundation.FailedCheck])
+  public static func amIRunInEmulator() -> Swift.Bool
+  public static func amIDebugged() -> Swift.Bool
+  public static func denyDebugger()
+  public static func amITampered(_ checks: [VisaMobileFoundation.FileIntegrityCheck]) -> VisaMobileFoundation.FileIntegrityCheckResult
+  public static func amIReverseEngineered() -> Swift.Bool
+  public static func amIRuntimeHooked(dyldWhiteList: [Swift.String], detectionClass: Swift.AnyClass, selector: ObjectiveC.Selector, isClassMethod: Swift.Bool) -> Swift.Bool
+  public static func amIProxied() -> Swift.Bool
+  @objc deinit
 }
 extension VisaMobileFoundation.AESKeySizeBits : Swift.Equatable {}
 extension VisaMobileFoundation.AESKeySizeBits : Swift.Hashable {}
@@ -695,6 +767,9 @@ extension VisaMobileFoundation.AESKeySizeBytes : Swift.RawRepresentable {}
 extension VisaMobileFoundation.AESEncryptionFlavor : Swift.Equatable {}
 extension VisaMobileFoundation.AESEncryptionFlavor : Swift.Hashable {}
 extension VisaMobileFoundation.AESEncryptionFlavor : Swift.RawRepresentable {}
+extension VisaMobileFoundation.NetworkType : Swift.Equatable {}
+extension VisaMobileFoundation.NetworkType : Swift.Hashable {}
+extension VisaMobileFoundation.NetworkType : Swift.RawRepresentable {}
 extension VisaMobileFoundation.ValidateDeviceAuthError : Swift.Equatable {}
 extension VisaMobileFoundation.ValidateDeviceAuthError : Swift.Hashable {}
 extension VisaMobileFoundation.ECDSASignatureVerificationError : Swift.Equatable {}
@@ -703,6 +778,8 @@ extension VisaMobileFoundation.ECKeyError : Swift.Equatable {}
 extension VisaMobileFoundation.ECKeyError : Swift.Hashable {}
 extension VisaMobileFoundation.HashFunction : Swift.Equatable {}
 extension VisaMobileFoundation.HashFunction : Swift.Hashable {}
+extension VisaMobileFoundation.JailbreakCheck : Swift.Equatable {}
+extension VisaMobileFoundation.JailbreakCheck : Swift.Hashable {}
 extension VisaMobileFoundation.JWEEncryptionAlgorithm : Swift.Equatable {}
 extension VisaMobileFoundation.JWEEncryptionAlgorithm : Swift.Hashable {}
 extension VisaMobileFoundation.JWEEncryptionAlgorithm : Swift.RawRepresentable {}
